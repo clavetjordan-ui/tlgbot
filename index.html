@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Produits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3f 100%);
+            min-height: 100vh;
+            padding: 50px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: backgroundMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .logo {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px auto;
+            display: block;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .main-title {
+            text-align: center;
+            color: white;
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            font-weight: 700;
+            animation: titleSlideIn 1s ease-out;
+        }
+
+        @keyframes titleSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Grille de cadres */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        /* Cadre produit */
+        .product-frame {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-frame:nth-child(1) { animation-delay: 0.1s; }
+        .product-frame:nth-child(2) { animation-delay: 0.2s; }
+        .product-frame:nth-child(3) { animation-delay: 0.3s; }
+        .product-frame:nth-child(4) { animation-delay: 0.4s; }
+        .product-frame:nth-child(5) { animation-delay: 0.5s; }
+        .product-frame:nth-child(6) { animation-delay: 0.6s; }
+
+        .product-frame:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+        }
+
+        .product-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(30,60,114,0.1) 0%, rgba(42,82,152,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .product-frame::after {
+            content: '✨';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0;
+            transform: scale(0) rotate(-180deg);
+            transition: all 0.4s ease;
+            z-index: 2;
+        }
+
+        .product-frame:hover::before {
+            opacity: 1;
+        }
+
+        .product-frame:hover::after {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .frame-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .product-frame:hover .frame-image {
+            transform: scale(1.05);
+        }
+
+        .frame-content {
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .frame-title {
+            font-size: 1.8em;
+            color: #1a4d2e;
+            margin-bottom: 15px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .product-frame:hover .frame-title {
+            color: #2d5f3f;
+        }
+
+        .frame-subtitle {
+            color: #666;
+            font-size: 1.05em;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .product-frame:hover .frame-subtitle {
+            color: #333;
+        }
+
+        /* Pop-up */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 30px 15px;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-container {
+            background: white;
+            border-radius: 25px;
+            max-width: 1000px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            animation: popupSlideIn 0.4s ease;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 26px;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(255,71,87,0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .popup-close:hover {
+            background: #ee5a6f;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .popup-media-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            padding: 40px 35px 30px 35px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .media-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .popup-media-section img,
+        .popup-media-section video {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .popup-info-section {
+            padding: 35px 40px 45px 40px;
+        }
+
+        .popup-product-title {
+            font-size: 2.3em;
+            color: #1a4d2e;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .popup-pricing {
+            background: linear-gradient(135deg, #2d5f3f 0%, #1a4d2e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 20px rgba(29, 77, 46, 0.4);
+        }
+
+        .pricing-title {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pricing-details {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .popup-description {
+            color: #444;
+            line-height: 1.9;
+            font-size: 1.1em;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #2d5f3f;
+            margin-bottom: 25px;
+        }
+
+        .booking-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #2d5f3f 0%, #1a4d2e 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 25px rgba(29, 77, 46, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .booking-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .booking-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(29, 77, 46, 0.6);
+        }
+
+        .booking-button:active {
+            transform: translateY(-1px);
+        }
+
+        .message-icon {
+            font-size: 1.4em;
+            animation: messageIconBounce 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes messageIconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2em;
+                margin-bottom: 50px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 0 10px;
+            }
+
+            .popup-media-section {
+                grid-template-columns: 1fr;
+                padding: 30px 20px 20px 20px;
+            }
+
+            .popup-media-section img,
+            .popup-media-section video {
+                height: 250px;
+            }
+
+            .popup-info-section {
+                padding: 25px 20px 35px 20px;
+            }
+
+            .popup-product-title {
+                font-size: 1.8em;
+            }
+
+            .pricing-details {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <img src="logo.png" alt="Royal Smoke Logo" class="logo">
+            <h1 class="main-title">Découvrez Nos Produits</h1>
+        </div>
+        
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <!-- Pop-up Produit -->
+    <div class="popup-overlay" id="productPopup">
+        <div class="popup-container">
+            <button class="popup-close" id="popupClose">×</button>
+            
+            <div class="popup-media-section">
+                <div class="media-item">
+                    <img id="popupImage" src="" alt="">
+                </div>
+                <div class="media-item">
+                    <video id="popupVideo" src="" controls></video>
+                </div>
+            </div>
+            
+            <div class="popup-info-section">
+                <h2 class="popup-product-title" id="popupTitle"></h2>
+                
+                <div class="popup-pricing">
+                    <div class="pricing-title">Tarifs</div>
+                    <div class="pricing-details" id="popupPrice"></div>
+                </div>
+                
+                <div class="popup-description" id="popupDescription"></div>
+                
+                <a href="#" class="booking-button" id="bookingButton">
+                    <span class="message-icon">💬</span>
+                    <span class="button-text">Réserver maintenant</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================================
+        // 📦 CONFIGURATION DES PRODUITS
+        // ======================================
+        
+        const products = [
+            {
+                title: "Jaune Mousseux",
+                subtitle: "Il Padrino",
+                image: "images/ilpadrino2.png",
+                video: "videos/jauneilpadrino.mp4",
+                pricing: "20€/3,6G - 40€/7,2G - 50€/10G - 110€/25G - 180/50G - 320€/100G",
+                description: "Jaune mousseux premium, une bonne odeur et un bon high, vraie qualité la mousse ++",
+                bookingLink: "https://signal.me/#eu/OnJu1jAHsdksoEoXfGxqesgWtS4ylq2lWjkUhVyy4uwBkLKY1RCUZWG6KvLLmvl"
+            },
+            {
+                title: "Solution Business Pro",
+                subtitle: "Idéale pour les entreprises",
+                image: "images/produit2.jpg",
+                video: "videos/produit2.mp4",
+                pricing: "899€ - Offre spéciale : 799€",
+                description: "Conçue spécialement pour répondre aux besoins des entreprises modernes. Interface intuitive, intégration facile avec vos outils existants, et évolutivité garantie. Compatible avec tous les systèmes d'exploitation. Formation en ligne offerte.",
+                bookingLink: "https://wa.me/33612345678?text=Bonjour,%20je%20souhaite%20réserver%20la%20Solution%20Business%20Pro"
+            },
+            {
+                title: "Édition Limitée Collector",
+                subtitle: "Série exclusive numérotée",
+                image: "images/produit3.jpg",
+                video: "videos/produit3.mp4",
+                pricing: "2 499€ (100 exemplaires uniquement)",
+                description: "Une édition limitée exceptionnelle, produite à seulement 100 exemplaires numérotés et certifiés. Matériaux nobles, finitions artisanales haut de gamme, et emballage premium avec certificat d'authenticité. Livré avec un coffret collector exclusif.",
+                bookingLink: "https://wa.me/33612345678?text=Bonjour,%20je%20souhaite%20réserver%20l'Édition%20Limitée%20Collector"
+            },
+            {
+                title: "Formule Découverte",
+                subtitle: "Parfait pour commencer",
+                image: "images/produit4.jpg",
+                video: "videos/produit4.mp4",
+                pricing: "349€ ou 3x 120€ sans frais",
+                description: "La solution idéale pour découvrir notre gamme sans engagement. Parfaitement adapté aux débutants avec un guide de prise en main complet. Mise à niveau possible vers les versions supérieures. Satisfait ou remboursé sous 30 jours.",
+                bookingLink: "https://wa.me/33612345678?text=Bonjour,%20je%20souhaite%20réserver%20la%20Formule%20Découverte"
+            },
+            {
+                title: "Pack Famille XL",
+                subtitle: "Pour toute la famille",
+                image: "images/produit5.jpg",
+                video: "videos/produit5.mp4",
+                pricing: "599€ - Licence 5 utilisateurs",
+                description: "Un pack complet pensé pour les familles nombreuses. Jusqu'à 5 profils utilisateurs personnalisables, contrôle parental intégré, et synchronisation automatique entre tous les appareils. Mises à jour gratuites à vie et stockage cloud 100GB inclus.",
+                bookingLink: "https://wa.me/33612345678?text=Bonjour,%20je%20souhaite%20réserver%20le%20Pack%20Famille%20XL"
+            },
+            {
+                title: "Version Studio Créative",
+                subtitle: "Pour les créateurs de contenu",
+                image: "images/produit6.jpg",
+                video: "videos/produit6.mp4",
+                pricing: "1 599€ ou abonnement 79€/mois",
+                description: "L'outil ultime pour les créateurs professionnels. Bibliothèque de ressources premium illimitée, export 4K/8K, plugins exclusifs et accès à notre communauté de créateurs. Support technique dédié avec expert assigné et sessions de coaching mensuelles.",
+                bookingLink: "https://wa.me/33612345678?text=Bonjour,%20je%20souhaite%20réserver%20la%20Version%20Studio%20Créative"
+            }
+        ];
+
+        // ======================================
+        // 🚀 CODE JAVASCRIPT
+        // ======================================
+
+        const productsGrid = document.getElementById('productsGrid');
+        const productPopup = document.getElementById('productPopup');
+        const popupClose = document.getElementById('popupClose');
+        const popupImage = document.getElementById('popupImage');
+        const popupVideo = document.getElementById('popupVideo');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupPrice = document.getElementById('popupPrice');
+        const popupDescription = document.getElementById('popupDescription');
+        const bookingButton = document.getElementById('bookingButton');
+
+        // Générer les cadres de produits
+        products.forEach((product, index) => {
+            const frame = document.createElement('div');
+            frame.className = 'product-frame';
+            frame.innerHTML = `
+                <img src="${product.image}" alt="${product.title}" class="frame-image">
+                <div class="frame-content">
+                    <h2 class="frame-title">${product.title}</h2>
+                    <p class="frame-subtitle">${product.subtitle}</p>
+                </div>
+            `;
+            
+            frame.addEventListener('click', () => openPopup(product));
+            productsGrid.appendChild(frame);
+        });
+
+        // Ouvrir la pop-up
+        function openPopup(product) {
+            popupImage.src = product.image;
+            popupImage.alt = product.title;
+            popupVideo.src = product.video;
+            popupTitle.textContent = product.title;
+            popupPrice.textContent = product.pricing;
+            popupDescription.textContent = product.description;
+            bookingButton.href = product.bookingLink;
+            
+            productPopup.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Fermer la pop-up
+        function closePopup() {
+            productPopup.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            popupVideo.pause();
+        }
+
+        popupClose.addEventListener('click', closePopup);
+        
+        productPopup.addEventListener('click', (e) => {
+            if (e.target === productPopup) {
+                closePopup();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html>
